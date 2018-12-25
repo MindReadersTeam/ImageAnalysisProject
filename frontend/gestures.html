@@ -2,34 +2,17 @@
 
 <head>
     <title>Gestures!</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-    <video id="video" width="1000" height="750" autoplay></video>
-    <button id="snap">Snap Photo</button>
-    <canvas id="canvas" width="1000" height="750"></canvas>
+    <div id="container">
+        <video id="video" autoplay></video>
+        <button id="snap">Snap Photo</button>
+        <canvas id="canvas"></canvas>
+    </div>
+
 </body>
-<script>
-    var video = document.getElementById('video');
-
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({
-            video: true
-        }).then(function(stream) {
-            //video.src = window.URL.createObjectURL(stream);
-            video.srcObject = stream;
-            video.play();
-        });
-    }
-
-    var canvas = document.getElementById('canvas');
-    var context = canvas.getContext('2d');
-    var video = document.getElementById('video');
-
-    // Trigger photo take
-    document.getElementById("snap").addEventListener("click", function() {
-        context.drawImage(video, 0, 0, 1000, 750);
-    });
-</script>
+<script src="main.js"></script>
 
 </html>
