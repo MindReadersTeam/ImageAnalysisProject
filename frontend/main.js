@@ -1,6 +1,7 @@
 const canvas = document.getElementById('canvas');
 const video = document.getElementById('video');
 
+
 handleCamera();
 
 document.getElementById('snap').addEventListener('click', () => {
@@ -17,42 +18,38 @@ function handleCamera() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const params = {
             video: {
-                width: {
-                    min: 640,
-                    ideal: 1280
-                },
-                height: {
-                    min: 480,
-                    ideal: 720
-                },
-                aspectRatio: {
-                    ideal: 1.7777777778
-                }
-            }
+                width: { ideal: 1920 },
+                height: { ideal: 1080 },
+                aspectRatio: 1.7777777778
+            },
+            audio: false
         };
 
         navigator.mediaDevices.getUserMedia(params)
             .then((stream) => {
-                //video.src = window.URL.createObjectURL(stream);
+                window.stream = stream;
                 video.srcObject = stream;
                 video.play();
             })
-            .catch(function(err) {
-                console.err(err);
+            .catch((err) => {
+                console.error(err);
             });
     }
 }
 
 function takeScreenshot() {
-    let beginWidth = (video.clientWidth - canvas.clientWidth) / 2;
-    let beginHeight = (video.clientHeight - canvas.clientHeight) / 2;
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    let left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
+    let top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
 
     const context = canvas.getContext('2d');
 
-    context.drawImage(video, beginWidth, beginHeight, canvas.clientWidth, canvas.clientHeight,
-        0, 0, canvas.clientWidth, canvas.clientHeight);
+    context.drawImage(video, left, top, canvas.width, canvas.height,
+        0, 0, canvas.width, canvas.height);
 
     setTimeout(() => {
-        context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }, 1000);
 }
