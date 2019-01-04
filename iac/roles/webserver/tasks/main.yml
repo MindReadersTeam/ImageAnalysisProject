@@ -1,0 +1,15 @@
+---
+# Install and configure nginx
+- include_tasks: nginx.yml
+
+# Project
+- name: Create app user
+  user:
+    name: "{{ app_user }}"
+    home: "/home/{{ app_user }}"
+
+# Download and deploy application
+- import_tasks: app.yml
+  become_user: "{{ app_user }}"
+  become: true
+

@@ -1,0 +1,39 @@
+---
+- name: Clone project
+  git:
+    repo: "{{ app_repo }}"
+    dest: "{{ app_dir }}"
+
+- name: Install project
+  pip:
+    requirements: "{{ app_dir }}/backend/requirements.txt"
+    virtualenv: "{{ venv_path }}"
+    virtualenv_command: "/usr/bin/python3.5 -m venv"
+
+- name: Install gunicorn
+  pip:
+    name: gunicorn
+    virtualenv: "{{ venv_path }}"
+    virtualenv_command: "/usr/bin/python3.5 -m venv"
+
+- name: Copy gunicorn systemd files into place
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - { src: "gunicorn.socket.j2", dest: "/etc/systemd/system/gunicorn.socket" }
+    - { src: "gunicorn.service.j2", dest: "/etc/systemd/system/gunicorn.service" }
+  become_user: root
+  become: true
+
+- name: Enable and run the gunicorn service.
+  service:
+    name: gunicorn
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  become_user: root
+  become: true

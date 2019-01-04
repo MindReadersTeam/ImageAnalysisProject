@@ -1,0 +1,21 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+PIDFile=/run/gunicorn/pid
+User={{ app_user }}
+Group={{ app_user }}
+RuntimeDirectory=gunicorn
+WorkingDirectory={{ app_dir }}/backend
+Environment="VIRTUAL_ENV={{ venv_path }}""
+Environment="PATH=$VIRTUAL_ENV/bin:$PATH"
+ExecStart={{ venv_path }}/bin/gunicorn --pid /run/gunicorn/pid   \
+          --bind unix:/run/gunicorn/socket wsgi:app
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

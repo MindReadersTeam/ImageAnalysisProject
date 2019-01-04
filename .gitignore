@@ -1,5 +1,14 @@
+# Others
+imgs/
+
+# Ansible
+*.retry
+#productionInv.yml
+
+# IDE
 .idea/
 .vscode/
+
+# Python
 __pycache__
 .venv
-imgs/

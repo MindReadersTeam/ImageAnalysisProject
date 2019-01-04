@@ -17,3 +17,10 @@ pip install -r requirements.txt
 from img_processing import process_dir
 process_dir('../imgs/in', '../imgs/out', True)
 ```
+
+## Deploy
+
+```bash
+pip install ansible
+ansible-playbook iac/site.yml 
+```

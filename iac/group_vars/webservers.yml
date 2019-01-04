@@ -1,0 +1,9 @@
+---
+app_user: "image_analysis"
+app_name: "ImageAnalysisProject"
+app_dir: "/home/{{ app_user }}/{{ app_name }}"
+app_repo: "https://github.com/MindReadersTeam/ImageAnalysisProject.git"
+
+server_domain: "mindreaders.ml"
+
+security_fail2ban_enabled: false
