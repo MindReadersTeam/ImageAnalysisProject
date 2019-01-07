@@ -1,0 +1,18 @@
+---
+- name: Ensure certbot is installed.
+  package: name=certbot state=present
+
+- name: Check if certificate already exists.
+  stat:
+    path: "/etc/letsencrypt/live/{{ server_domain }}/cert.pem"
+  register: letsencrypt_cert
+
+- name: Stop services to allow certbot to generate a cert.
+  service:
+    name: nginx
+    state: stopped
+  when: not letsencrypt_cert.stat.exists
+
+- name: Generate new certificate
+  command: "certbot certonly --standalone --noninteractive --agree-tos --email {{ admin_email }} -d {{ server_domain }} -d www.{{ server_domain }}"
+  when: not letsencrypt_cert.stat.exists

@@ -3,6 +3,7 @@ app_user: "image_analysis"
 app_name: "ImageAnalysisProject"
 app_dir: "/home/{{ app_user }}/{{ app_name }}"
 app_repo: "https://github.com/MindReadersTeam/ImageAnalysisProject.git"
+admin_email: "25662022+Shaid3r@users.noreply.github.com"
 
 server_domain: "mindreaders.ml"
 
