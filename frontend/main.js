@@ -5,12 +5,13 @@ const video = document.getElementById('video');
 handleCamera();
 
 document.getElementById('snap').addEventListener('click', () => {
-    takeScreenshot();
+    takeScreenShot();
 });
 
 document.body.addEventListener('keypress', (e) => {
+    //TODO: Add appropriate keyboard handling
     if (e.keyCode === 32) {
-        takeScreenshot();
+        takeScreenShot();
     }
 });
 
@@ -37,7 +38,7 @@ function handleCamera() {
     }
 }
 
-function takeScreenshot() {
+function takeScreenShot() {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
 
@@ -49,7 +50,42 @@ function takeScreenshot() {
     context.drawImage(video, left, top, canvas.width, canvas.height,
         0, 0, canvas.width, canvas.height);
 
+  console.log(getRequestBody());
+
+  fetch('http://192.168.0.220:5000/uploadImg', {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: getRequestBody()
+  })
+    .then(response => response.json())
+    .then(json => {
+      console.log(json);
+      clearCanvas(500);
+    });
+
+  // var oReq = new XMLHttpRequest();
+  // oReq.addEventListener("load", (response) => console.log(response.json()));
+  // oReq.overrideMimeType("application/json");
+  // oReq.open("POST", "http://192.168.0.220:5000/uploadImg");
+  // oReq.send(getRequestBody());
+}
+
+const getRequestBody = () =>
+  JSON.stringify({
+    file: getBase64Image(),
+    type: 'ok'
+});
+
+function getBase64Image() {
+    const dataURL = canvas.toDataURL("image/jpeg", .8);
+    return dataURL.replace(/^data:image\/(png|jpeg);base64,/, "");
+}
+
+function clearCanvas(timeout) {
     setTimeout(() => {
-        context.clearRect(0, 0, canvas.width, canvas.height);
-    }, 1000);
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    }, timeout);
 }
