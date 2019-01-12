@@ -1,0 +1,47 @@
+---
+- name: Ensure APT official nginx key.
+  apt_key: url=http://nginx.org/keys/nginx_signing.key
+
+- name: Ensure APT official nginx repository (mainline)
+  apt_repository:
+    repo: "deb http://nginx.org/packages/mainline/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx"
+    state: present
+
+- name: Install nginx.
+  package: name=nginx state=present
+
+# Nginx setup.
+- name: Copy nginx configuration in place.
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - { src: "nginx.conf", dest: "{{ nginx_conf_file_path }}" }
+    - { src: "app_server.conf", dest: "{{ nginx_sites_available_path }}/{{ app_name }}" }
+  notify:
+    - reload nginx
+
+- name: Disable default nginx site
+  file:
+    path: "{{ nginx_sites_enabled_path }}/default"
+    state: absent
+
+- name: Enable project site
+  file:
+    src: "{{ nginx_sites_available_path }}/{{ app_name }}"
+    dest: "{{ nginx_sites_enabled_path }}/{{ app_name }}"
+    state: link
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload nginx
+
+# Install ssl
+- import_tasks: ssl.yml
+
+- name: Ensure nginx is started and enabled to start at boot.
+  service: name=nginx state=started enabled=yes

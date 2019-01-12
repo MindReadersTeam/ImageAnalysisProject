@@ -1,0 +1,35 @@
+---
+security_ssh_config_path: /etc/ssh/sshd_config
+security_sshd_name: ssh
+security_ssh_port: 22
+security_ssh_password_authentication: "no"
+security_ssh_permit_root_login: "yes"
+security_ssh_permit_empty_password: "no"
+security_ssh_challenge_response_auth: "no"
+security_ssh_max_auth_tries: 6
+security_ssh_x11_forwarding: "no"
+
+security_sudoers_passwordless: []
+security_sudoers_passworded: []
+
+security_autoupdate_enabled: true
+security_autoupdate_blacklist: []
+
+security_autoupdate_mail_to: ""
+security_autoupdate_mail_on_error: true
+
+security_fail2ban_enabled: true
+
+# Firewall
+firewall_state: started
+firewall_enabled_at_boot: true
+firewall_reverse_path_filtering: false
+
+# 873 - rsync
+firewall_allowed_tcp_ports: ["{{ security_ssh_port }}", 80, 443, 873]
+firewall_allowed_udp_ports: []
+firewall_forwarded_tcp_ports: []
+firewall_forwarded_udp_ports: []
+firewall_additional_rules: []
+firewall_ip6_additional_rules: []
+firewall_log_dropped_packets: true

@@ -1,0 +1,26 @@
+---
+- name: Update the repository cache "apt-get update"
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Safe upgrade "apt-get upgrade"
+  apt:
+    upgrade: yes
+
+- name: Ensure basic packages are installed
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - aptitude
+      - git
+      - tree
+      - htop
+      - gcc
+      - make
+      - sqlite
+      - python3.5
+      - python3-pip
+      - python3.5-venv
