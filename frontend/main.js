@@ -10,12 +10,12 @@ document.getElementById('snap').addEventListener('click', () => {
     takeScreenShot();
 });
 
-document.body.addEventListener('keypress', (e) => {
-    //TODO: Add appropriate keyboard handling and debouncing
-    if (e.keyCode === 32) {
-        takeScreenShot();
-    }
-});
+const handleSpaceBar = debounce(function(e) {
+  if (e.which === 32) {
+    takeScreenShot();
+  }
+}, 500, true);
+document.body.addEventListener('keydown', handleSpaceBar);
 
 function handleCamera() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -107,3 +107,24 @@ function clearCanvas(timeout) {
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     }, timeout);
 }
+
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function() {
+    const context = this, args = arguments;
+    const later = () => {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    };
+
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
+}
+
