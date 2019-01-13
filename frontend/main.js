@@ -1,6 +1,8 @@
 const canvas = document.getElementById('canvas');
 const video = document.getElementById('video');
 
+const URL = 'http://192.168.0.220:5000';
+const endpoint = 'uploadImg';
 
 handleCamera();
 
@@ -9,7 +11,7 @@ document.getElementById('snap').addEventListener('click', () => {
 });
 
 document.body.addEventListener('keypress', (e) => {
-    //TODO: Add appropriate keyboard handling
+    //TODO: Add appropriate keyboard handling and debouncing
     if (e.keyCode === 32) {
         takeScreenShot();
     }
@@ -50,33 +52,49 @@ function takeScreenShot() {
     context.drawImage(video, left, top, canvas.width, canvas.height,
         0, 0, canvas.width, canvas.height);
 
-  console.log(getRequestBody());
+  const body = getRequestBody().toString();
 
-  fetch('http://192.168.0.220:5000/uploadImg', {
-    method: "POST",
-    mode: "no-cors",
+  fetch(`${URL}/${endpoint}`, {
+    method: "post",
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json'
     },
-    body: getRequestBody()
+    body
   })
-    .then(response => response.json())
+    .then(response => response.text())
     .then(json => {
-      console.log(json);
-      clearCanvas(500);
-    });
+      const image = new Image();
+      image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
+      image.src = `data:image/jpg;base64,${JSON.parse(json).file}`;
 
+      clearCanvas(2500);
+    })
+    .catch(err => console.error(err));
+
+  // TODO: check if without get_json(force=true)
   // var oReq = new XMLHttpRequest();
-  // oReq.addEventListener("load", (response) => console.log(response.json()));
+  // oReq.onload = (response) => {
+  //   console.log(response.currentTarget.responseText);
+  //   const resImg = JSON.parse(response.currentTarget.responseText);
+  //
+  //   var image = new Image();
+  //   image.onload = function() {
+  //     canvas.getContext('2d').drawImage(image, 0, 0);
+  //   };
+  //   image.src = "data:image/png;base64," + resImg.file;
+  //
+  //   clearCanvas(2500);
+  // };
   // oReq.overrideMimeType("application/json");
-  // oReq.open("POST", "http://192.168.0.220:5000/uploadImg");
+  // oReq.open("POST", `${URL}/${endpoint}`);
   // oReq.send(getRequestBody());
 }
 
 const getRequestBody = () =>
   JSON.stringify({
     file: getBase64Image(),
-    type: 'ok'
+    type: 'like'
+    //TODO: get type from select
 });
 
 function getBase64Image() {
