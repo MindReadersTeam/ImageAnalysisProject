@@ -4,14 +4,14 @@ const video = document.getElementById('video');
 const URL = 'http://192.168.0.220:5000';
 const endpoint = 'uploadImg';
 
-handleCamera();
 
+handleCamera();
 document.getElementById('snap').addEventListener('click', () => {
     takeScreenShot();
 });
 
 const handleSpaceBar = debounce(function(e) {
-  if (e.which === 32) {
+  if (e.code === "Space") {
     takeScreenShot();
   }
 }, 500, true);
@@ -41,54 +41,39 @@ function handleCamera() {
 }
 
 function takeScreenShot() {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
 
-    let left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
-    let top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
+  const left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
+  const top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
 
-    const context = canvas.getContext('2d');
+  const context = canvas.getContext('2d');
+  context.drawImage(video, left, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
-    context.drawImage(video, left, top, canvas.width, canvas.height,
-        0, 0, canvas.width, canvas.height);
+  const body = getRequestBody();
 
-  const body = getRequestBody().toString();
+  sendImage(body)
+    .then(json => {
+        const image = new Image();
+        image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
+        image.src = `data:image/jpg;base64,${JSON.parse(json).file}`;
 
-  fetch(`${URL}/${endpoint}`, {
+        // Maybe add key board event on the image and also save the filepath from JSON
+        clearCanvas(2500);
+    });
+}
+
+const sendImage = (body) => {
+  return fetch(`${URL}/${endpoint}`, {
     method: "post",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json"
     },
     body
   })
     .then(response => response.text())
-    .then(json => {
-      const image = new Image();
-      image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
-      image.src = `data:image/jpg;base64,${JSON.parse(json).file}`;
-
-      clearCanvas(2500);
-    })
     .catch(err => console.error(err));
-
-  // TODO: check if without get_json(force=true)
-  // var oReq = new XMLHttpRequest();
-  // oReq.onload = (response) => {
-  //   console.log(response.currentTarget.responseText);
-  //   const resImg = JSON.parse(response.currentTarget.responseText);
-  //
-  //   var image = new Image();
-  //   image.onload = function() {
-  //     canvas.getContext('2d').drawImage(image, 0, 0);
-  //   };
-  //   image.src = "data:image/png;base64," + resImg.file;
-  //
-  //   clearCanvas(2500);
-  // };
-  // oReq.overrideMimeType("application/json");
-  // oReq.open("POST", `${URL}/${endpoint}`);
-  // oReq.send(getRequestBody());
-}
+};
 
 const getRequestBody = () =>
   JSON.stringify({
@@ -127,4 +112,3 @@ function debounce(func, wait, immediate) {
     }
   };
 }
-
