@@ -4,6 +4,7 @@ const video = document.getElementById('video');
 const URL = 'http://192.168.0.220:5000';
 const uploadEndpoint = 'uploadImg';
 const removeEndpoint = 'removeImg';
+let capturingFlag = true;
 
 
 (function handleCamera() {
@@ -29,37 +30,48 @@ const removeEndpoint = 'removeImg';
   }
 })();
 
-document.getElementById('snap').addEventListener('click', () => {
-  takeScreenShot();
-});
+document.getElementById('snap').addEventListener('click', () => takeScreenShot());
+
+const takeScreenShot = () => {
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    const left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
+    const top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
+
+    const context = canvas.getContext('2d');
+    context.drawImage(video, left, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+
+    sendImage(getRequestBody())
+      .then(json => {
+        const image = new Image();
+        image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
+        image.src = `data:image/jpg;base64,${json.file}`;
+        document.body.onkeydown = (e)=> {
+          if (e.code === 'KeyD') {
+            removeImage(json.filepath).then(response => {
+              clearCanvas(0);
+              capturingFlag = !capturingFlag;
+              document.body.onkeydown = handleSpaceBar;
+            });
+          } else {
+            clearCanvas(0);
+            capturingFlag = !capturingFlag;
+            document.body.onkeydown = handleSpaceBar;
+          }
+        }
+      });
+  }
+;
 
 const handleSpaceBar = debounce(function (e) {
-  if (e.code === "Space") {
+  if (capturingFlag && e.code === "Space") {
+    capturingFlag = !capturingFlag;
     takeScreenShot();
   }
 }, 500, true);
-document.body.addEventListener('keydown', handleSpaceBar);
+document.body.onkeydown = handleSpaceBar;
 
-const takeScreenShot = () => {
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
-
-  const left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
-  const top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
-
-  const context = canvas.getContext('2d');
-  context.drawImage(video, left, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
-  sendImage(getRequestBody())
-    .then(json => {
-      const image = new Image();
-      image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
-      image.src = `data:image/jpg;base64,${JSON.parse(json).file}`;
-
-      // Maybe add key board event on the image and also save the filepath from JSON
-      clearCanvas(2500);
-    });
-};
 
 const sendImage = (body) => {
   return fetch(`${URL}/${uploadEndpoint}`, {
@@ -68,20 +80,17 @@ const sendImage = (body) => {
       "Content-Type": "application/json"
     },
     body
-  })
-    .then(response => response.text())
-    .catch(err => console.error(err));
+  }).then(response => response.json());
 };
 
 const removeImage = (filepath) => {
-  return fetch(`${URL}/${uploadEndpoint}`, {
+  return fetch(`${URL}/${removeEndpoint}`, {
     method: "post",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({filepath})
-  })
-    .then(response => response.text());
+    body: JSON.stringify({filepath: filepath})
+  }).then(response => response.text());
 };
 
 const getRequestBody = () => JSON.stringify({
