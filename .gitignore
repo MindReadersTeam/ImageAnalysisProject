@@ -1,5 +1,6 @@
 # Others
 imgs/
+.DS_Store
 
 # Ansible
 *.retry
