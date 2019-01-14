@@ -4,6 +4,14 @@ const video = document.getElementById('video');
 const URL = 'http://192.168.0.220:5000';
 const uploadEndpoint = 'uploadImg';
 const removeEndpoint = 'removeImg';
+const fetchParams = {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: null
+};
+
 let capturingFlag = true;
 
 
@@ -75,21 +83,13 @@ document.body.onkeydown = handleSpaceBar;
 
 
 const sendImage = (body) => {
-  return fetch(`${URL}/${uploadEndpoint}`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body
-  }).then(response => response.json());
+  return fetch(`${URL}/${uploadEndpoint}`, { ...fetchParams, body })
+    .then(response => response.json());
 };
 
 const removeImage = (filepath) => {
   return fetch(`${URL}/${removeEndpoint}`, {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    ...fetchParams,
     body: JSON.stringify({filepath: filepath})
   }).then(response => response.text());
 };
