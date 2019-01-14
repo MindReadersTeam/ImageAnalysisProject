@@ -1,16 +1,33 @@
 <html lang="en">
 
 <head>
-    <title>Gestures!</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
+  <title>Gestures!</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-    <div id="container">
-        <video id="video" autoplay></video>
-        <button id="snap">Snap Photo</button>
-        <canvas id="canvas"></canvas>
-    </div>
+<div id="container">
+  <video id="video" autoplay></video>
+  <div class="controls">
+    <label for="gesture-select">Choose a pet:</label>
+
+    <select id="gesture-select">
+      <option value="like">Like</option>
+      <option value="dislike">Dislike</option>
+      <option value="fist">Fist</option>
+      <option value="victory">Victory</option>
+      <option value="ok">Ok</option>
+      <option value="c_letter">C letter</option>
+      <option value="w_letter">W letter</option>
+      <option value="number_5">Number 5</option>
+      <option value="hook">Hook</option>
+      <option value="call_me">Call me!</option>
+    </select>
+
+    <button id="snap"><img src="assets/camera.svg" alt="Snap photo!"/></button>
+  </div>
+  <canvas id="canvas"></canvas>
+</div>
 
 </body>
 <script src="main.js"></script>
