@@ -33,36 +33,37 @@ let capturingFlag = true;
 document.getElementById('snap').addEventListener('click', () => takeScreenShot());
 
 const takeScreenShot = () => {
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
 
-    const left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
-    const top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
+  const left = canvas.offsetLeft - video.offsetLeft + canvas.clientLeft;
+  const top = canvas.offsetTop - video.offsetTop + canvas.clientTop;
 
-    const context = canvas.getContext('2d');
-    context.drawImage(video, left, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+  const context = canvas.getContext('2d');
+  context.drawImage(video, left, top, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
-    sendImage(getRequestBody())
-      .then(json => {
-        const image = new Image();
-        image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
-        image.src = `data:image/jpg;base64,${json.file}`;
-        document.body.onkeydown = (e)=> {
-          if (e.code === 'KeyD') {
-            removeImage(json.filepath).then(response => {
-              clearCanvas(0);
-              capturingFlag = !capturingFlag;
-              document.body.onkeydown = handleSpaceBar;
-            });
-          } else {
-            clearCanvas(0);
-            capturingFlag = !capturingFlag;
-            document.body.onkeydown = handleSpaceBar;
-          }
+  sendImage(getRequestBody())
+    .then(json => {
+      const image = new Image();
+      image.onload = () => canvas.getContext('2d').drawImage(image, 0, 0);
+      image.src = `data:image/jpg;base64,${json.file}`;
+      document.body.onkeydown = (e) => {
+        if (e.code === 'KeyD') {
+          removeImage(json.filepath).then(response => {
+            restoreHandlingSpaceBar();
+          });
+        } else {
+          restoreHandlingSpaceBar();
         }
-      });
-  }
-;
+      }
+    });
+};
+
+const restoreHandlingSpaceBar = () => {
+  clearCanvas(0);
+  capturingFlag = !capturingFlag;
+  document.body.onkeydown = handleSpaceBar;
+};
 
 const handleSpaceBar = debounce(function (e) {
   if (capturingFlag && e.code === "Space") {
