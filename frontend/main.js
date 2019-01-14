@@ -81,9 +81,11 @@ const takeScreenShot = () => {
         if (e.code === 'KeyD') {
           removeImage(json.filepath).then(response => {
             restoreHandlingSpaceBar();
+            showModal(response);
           });
         } else {
           restoreHandlingSpaceBar();
+          showModal('Image saved');
         }
       }
     });
@@ -105,6 +107,16 @@ const restoreHandlingSpaceBar = () => {
   clearCanvas(0);
   capturingFlag = true;
   document.body.onkeydown = handleSpaceBar;
+};
+
+
+const showModal = (message) => {
+  const modal = document.querySelector('aside');
+  modal.innerText = message;
+  modal.classList.add('fadeIn');
+  setTimeout(() => {
+    modal.classList.remove('fadeIn');
+  }, 2000);
 };
 
 
