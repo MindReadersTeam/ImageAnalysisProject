@@ -40,6 +40,15 @@ let capturingFlag = true;
 
 document.getElementById('snap').addEventListener('click', () => takeScreenShot());
 
+const handleSpaceBar = debounce(function (e) {
+  if (capturingFlag && e.code === "Space") {
+    capturingFlag = !capturingFlag;
+    takeScreenShot();
+  }
+}, 500, true);
+document.body.onkeydown = handleSpaceBar;
+
+
 const takeScreenShot = () => {
   canvas.width = canvas.clientWidth;
   canvas.height = canvas.clientHeight;
@@ -67,21 +76,6 @@ const takeScreenShot = () => {
     });
 };
 
-const restoreHandlingSpaceBar = () => {
-  clearCanvas(0);
-  capturingFlag = !capturingFlag;
-  document.body.onkeydown = handleSpaceBar;
-};
-
-const handleSpaceBar = debounce(function (e) {
-  if (capturingFlag && e.code === "Space") {
-    capturingFlag = !capturingFlag;
-    takeScreenShot();
-  }
-}, 500, true);
-document.body.onkeydown = handleSpaceBar;
-
-
 const sendImage = (body) => {
   return fetch(`${URL}/${uploadEndpoint}`, { ...fetchParams, body })
     .then(response => response.json());
@@ -94,15 +88,22 @@ const removeImage = (filepath) => {
   }).then(response => response.text());
 };
 
+const restoreHandlingSpaceBar = () => {
+  clearCanvas(0);
+  capturingFlag = !capturingFlag;
+  document.body.onkeydown = handleSpaceBar;
+};
+
+
 const getRequestBody = () => JSON.stringify({
   file: getBase64Image(),
   type: document.body.querySelector('select').value
 });
 
-function getBase64Image() {
+const getBase64Image = () => {
   const dataURL = canvas.toDataURL("image/jpeg", .8);
   return dataURL.replace(/^data:image\/(png|jpeg);base64,/, "");
-}
+};
 
 const clearCanvas = (timeout) => setTimeout(() => {
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
