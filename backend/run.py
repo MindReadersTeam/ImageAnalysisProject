@@ -5,5 +5,8 @@ app = Flask(__name__)
 def hello():
     return "<h1 style='color:blue'>Hello There!</h1>"
 
+from img_uploading import upload_api
+app.register_blueprint(upload_api)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
