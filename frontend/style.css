@@ -25,11 +25,30 @@ body {
   height: 5vh;
   background-color: burlywood;
   border: 2px solid darkgoldenrod;
-  border-radius: 10px;
+  border-radius: 1vh;
   outline: none;
 }
 
+#snap:hover {
+  background-color: wheat;
+}
+
+#snap img {
+  height: 100%;
+  color: #ffffff;
+}
+
 .controls {
-  background-color: aliceblue;
-  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  background-color: antiquewhite;
+  border-radius: 1vh;
+}
+
+.controls > *:not(*:last-child) {
+  margin: 0 1vh;
+}
+
+select {
+  height: 4.5vh;
 }
