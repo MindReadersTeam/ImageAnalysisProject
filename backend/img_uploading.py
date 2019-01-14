@@ -6,7 +6,7 @@ from img_processing import process_dir
 
 upload_api = Blueprint('upload_api', __name__)
 
-mainImgDir = '../images/'
+mainImgDir = '../imgs/'
 
 @upload_api.route('/uploadImg', methods=['POST', 'GET'])
 def uploadImg():
