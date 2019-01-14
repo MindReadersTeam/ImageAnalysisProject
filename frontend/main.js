@@ -15,13 +15,22 @@ const fetchParams = {
 let capturingFlag = true;
 
 
+video.onloadedmetadata = (e) => {
+  canvas.style.top = Math.abs(video.videoHeight - canvas.clientHeight) / 2 + "px";
+};
+
 (function handleCamera() {
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     const params = {
       video: {
-        width: {ideal: 1920},
-        height: {ideal: 1080},
-        aspectRatio: 1.7777777778
+        width: {
+          min: 640,
+          ideal: 1920
+        },
+        height: {
+          min: 640,
+          ideal: 1080
+        }
       },
       audio: false
     };
@@ -38,11 +47,15 @@ let capturingFlag = true;
   }
 })();
 
-document.getElementById('snap').addEventListener('click', () => takeScreenShot());
+document.getElementById('snap').addEventListener('click', () => {
+  capturingFlag = false;
+  takeScreenShot();
+});
 
 const handleSpaceBar = debounce(function (e) {
   if (capturingFlag && e.code === "Space") {
-    capturingFlag = !capturingFlag;
+    e.preventDefault();
+    capturingFlag = false;
     takeScreenShot();
   }
 }, 500, true);
@@ -68,16 +81,18 @@ const takeScreenShot = () => {
         if (e.code === 'KeyD') {
           removeImage(json.filepath).then(response => {
             restoreHandlingSpaceBar();
+            showModal(response);
           });
         } else {
           restoreHandlingSpaceBar();
+          showModal('Image saved');
         }
       }
     });
 };
 
 const sendImage = (body) => {
-  return fetch(`${URL}/${uploadEndpoint}`, { ...fetchParams, body })
+  return fetch(`${URL}/${uploadEndpoint}`, {...fetchParams, body})
     .then(response => response.json());
 };
 
@@ -90,14 +105,24 @@ const removeImage = (filepath) => {
 
 const restoreHandlingSpaceBar = () => {
   clearCanvas(0);
-  capturingFlag = !capturingFlag;
+  capturingFlag = true;
   document.body.onkeydown = handleSpaceBar;
+};
+
+
+const showModal = (message) => {
+  const modal = document.querySelector('aside');
+  modal.innerText = message;
+  modal.classList.add('fadeIn');
+  setTimeout(() => {
+    modal.classList.remove('fadeIn');
+  }, 2000);
 };
 
 
 const getRequestBody = () => JSON.stringify({
   file: getBase64Image(),
-  type: document.body.querySelector('select').value
+  type: document.querySelector('select').value
 });
 
 const getBase64Image = () => {
