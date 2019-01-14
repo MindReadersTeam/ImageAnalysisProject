@@ -24,13 +24,17 @@ body {
 #snap {
   height: 5vh;
   background-color: burlywood;
-  border: 2px solid darkgoldenrod;
-  border-radius: 1vh;
+  border: 2px solid burlywood;
+  border-left: 2px solid darkgoldenrod;
+  border-radius: 0 1vh 1vh 0;
   outline: none;
+  z-index: 1;
 }
 
 #snap:hover {
   background-color: wheat;
+  border: 2px solid wheat;
+  border-left: 2px solid darkgoldenrod;
 }
 
 #snap img {
@@ -41,8 +45,10 @@ body {
 .controls {
   display: flex;
   align-items: center;
+  border: 2px solid darkgoldenrod;
   background-color: antiquewhite;
   border-radius: 1vh;
+  box-sizing:border-box;
 }
 
 .controls > *:not(*:last-child) {
