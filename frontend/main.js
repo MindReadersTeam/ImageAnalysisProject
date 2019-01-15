@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const video = document.getElementById('video');
 
-const URL = 'http://192.168.0.220:5000';
+const URL = 'localhost:8533';
 const uploadEndpoint = 'uploadImg';
 const removeEndpoint = 'removeImg';
 const fetchParams = {
