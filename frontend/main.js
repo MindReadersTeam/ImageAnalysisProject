@@ -85,7 +85,7 @@ const takeScreenShot = () => {
           });
         } else {
           restoreHandlingSpaceBar();
-          showModal('Image saved');
+          showModal(`Image saved ${json.filepath} :D`);
         }
       }
     });
