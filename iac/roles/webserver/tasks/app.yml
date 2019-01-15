@@ -3,6 +3,8 @@
   git:
     repo: "{{ app_repo }}"
     dest: "{{ app_dir }}"
+  notify:
+    - restart gunicorn
 
 - name: Install project
   pip:

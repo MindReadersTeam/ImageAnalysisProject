@@ -2,82 +2,97 @@ from flask import request, jsonify, Blueprint
 import os
 import json
 import base64
-from img_processing import process_dir
+from img_processing import process_and_save_image
+from pathlib import Path
+import gest_types
 
 upload_api = Blueprint('upload_api', __name__)
 
 mainImgDir = '../imgs/'
 
-@upload_api.route('/uploadImg', methods=['POST', 'GET'])
+
+def prepareImgDirs():
+    for gest_type in gest_types.types:
+        (Path(mainImgDir) / "raw" / gest_type).mkdir(parents=True, exist_ok=True)
+        (Path(mainImgDir) / "processed" / gest_type).mkdir(parents=True, exist_ok=True)
+
+
+prepareImgDirs()
+
+@upload_api.route('/uploadImg', methods=['POST'])
 def uploadImg():
-	if request.method == 'POST' :	
-			requestData = request.get_json()
-			
-			if 'file' in requestData and 'type' in requestData:
-				saveImg(requestData['file'], requestData['type'])
-				increaseImgCounter(requestData['type'])
-				process_dir(mainImgDir + 'raw/' + requestData['type'], mainImgDir + 'processed/' + requestData['type'], True)
+    requestData = request.get_json()
 
-			return jsonify({'filepath' : requestData['type'] + '/' + getImgFileName(requestData['type']), 'file' : getEncodedStringOfProcessedImg(requestData['type'])})
-	
-	return 'Error'
+    if 'file' in requestData and 'type' in requestData:
+        saveImg(requestData['file'], requestData['type'])
+        increaseImgCounter(requestData['type'])
+        process_and_save_image(mainImgDir + 'raw/' + requestData['type'],
+                               mainImgDir + 'processed/' + requestData['type'])
 
-@upload_api.route('/removeImg', methods=['POST', 'GET'])
+    return jsonify({'filepath': requestData['type'] + '/' + getImgFileName(requestData['type']),
+                    'file': getEncodedStringOfProcessedImg(requestData['type'])})
+
+
+@upload_api.route('/removeImg', methods=['POST'])
 def removeImg():
-	if request.method == 'POST':
-		requestData = request.get_json()
+    requestData = request.get_json()
 
-		if 'filepath' in requestData:
-			deleteImgs(requestData['filepath'])
-			reduceImgCounter(requestData['filepath'].split('/', 1)[0])
+    if 'filepath' in requestData:
+        deleteImgs(requestData['filepath'])
+        reduceImgCounter(requestData['filepath'].split('/', 1)[0])
 
-		return 'File removed'
-	return 'Error'
+    return 'File removed'
+
 
 def deleteImgs(filePath):
-		try:
-			os.remove(mainImgDir + 'raw/' + filePath)
-			os.remove(mainImgDir + 'processed/' + filePath)
-		except:
-			return 'Cannot remove file'
+    try:
+        os.remove(mainImgDir + 'raw/' + filePath)
+        os.remove(mainImgDir + 'processed/' + filePath)
+    except:
+        return 'Cannot remove file'
 
 
 def getEncodedStringOfProcessedImg(type):
-	with open(mainImgDir + 'processed/' + type + '/' + getImgFileName(type), 'rb') as file:
-			encodedImg = base64.b64encode(file.read())
+    with open(mainImgDir + 'processed/' + type + '/' + getImgFileName(type), 'rb') as file:
+        encodedImg = base64.b64encode(file.read())
 
-	return encodedImg
+    return encodedImg
+
 
 def saveImg(img, type):
-	with open(getNewImgPath(type), 'wb') as file:
-		file.write(base64.b64decode(img))
+    with open(getNewImgPath(type), 'wb') as file:
+        file.write(base64.b64decode(img))
+
 
 def getImgFileName(type):
-	with open(mainImgDir + 'imgNumbers.json', 'r') as file:
-		imgNumbers = json.load(file)
+    with open(mainImgDir + 'imgNumbers.json', 'r') as file:
+        imgNumbers = json.load(file)
 
-	return str(imgNumbers[type]) + '.jpg'
+    return str(imgNumbers[type]) + '.jpg'
+
 
 def getNewImgPath(type):
-	with open(mainImgDir + 'imgNumbers.json', 'r') as file:
-		imgNumbers = json.load(file)
+    with open(mainImgDir + 'imgNumbers.json', 'r') as file:
+        imgNumbers = json.load(file)
 
-	return mainImgDir + 'raw/' + type + '/' + str(imgNumbers[type] + 1) + '.jpg'
+    return mainImgDir + 'raw/' + type + '/' + str(imgNumbers[type] + 1) + '.jpg'
+
 
 def reduceImgCounter(type):
-	with open(mainImgDir + 'imgNumbers.json', 'r') as file:
-		imgNumbers = json.load(file)
+    with open(mainImgDir + 'imgNumbers.json', 'r') as file:
+        imgNumbers = json.load(file)
 
-	imgNumbers[type] -= 1
+    imgNumbers[type] -= 1
 
-	with open(mainImgDir + 'imgNumbers.json', 'w') as file:
-		json.dump(imgNumbers, file)
+    with open(mainImgDir + 'imgNumbers.json', 'w') as file:
+        json.dump(imgNumbers, file)
+
 
 def increaseImgCounter(type):
-	with open(mainImgDir + 'imgNumbers.json', 'r') as file:
-		imgNumbers = json.load(file)
+    with open(mainImgDir + 'imgNumbers.json', 'r') as file:
+        imgNumbers = json.load(file)
 
-	imgNumbers[type] += 1
+    imgNumbers[type] += 1
 
-	with open(mainImgDir + 'imgNumbers.json', 'w') as file:
-		json.dump(imgNumbers, file)
+    with open(mainImgDir + 'imgNumbers.json', 'w') as file:
+        json.dump(imgNumbers, file)

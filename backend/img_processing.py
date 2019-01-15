@@ -29,6 +29,15 @@ def process_image(img, disk_radius=20):
     return sobel(mean_bilateral(img, disk(disk_radius)))
 
 
+def process_and_save_image(img_path, output_path):
+    ip = Path(img_path)
+    op = Path(output_path)
+
+    img = load_image(ip.as_posix())
+    img = process_image(img)
+    io.imsave(op.as_posix(), img)
+
+
 def process_dir(input_dir, output_dir, verbose=False):
     """
     Processes every image in 'input_dir' and results saves in 'output_dir'.
