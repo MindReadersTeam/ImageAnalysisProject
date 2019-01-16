@@ -26,7 +26,7 @@ firewall_enabled_at_boot: true
 firewall_reverse_path_filtering: false
 
 # 873 - rsync
-firewall_allowed_tcp_ports: ["{{ security_ssh_port }}", 80, 443, 873]
+firewall_allowed_tcp_ports: ["{{ security_ssh_port }}", 80, 443, 873, 8553]
 firewall_allowed_udp_ports: []
 firewall_forwarded_tcp_ports: []
 firewall_forwarded_udp_ports: []
