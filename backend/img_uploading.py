@@ -34,10 +34,11 @@ def uploadImg():
     if 'file' in requestData and 'type' in requestData:
         saveImg(requestData['file'], requestData['type'])
         increaseImgCounter(requestData['type'])
-        process_and_save_image(mainImgDir + 'raw/' + requestData['type'],
-                               mainImgDir + 'processed/' + requestData['type'])
+        img_fn = getImgFileName(requestData['type'])
+        process_and_save_image(mainImgDir + 'raw/' + requestData['type'] + "/" + img_fn,
+                               mainImgDir + 'processed/' + requestData['type'] + "/" + img_fn)
 
-    return jsonify({'filepath': requestData['type'] + '/' + getImgFileName(requestData['type']),
+    return jsonify({'filepath': requestData['type'] + '/' + img_fn,
                     'file': getEncodedStringOfProcessedImg(requestData['type'])})
 
 
@@ -64,7 +65,8 @@ def getEncodedStringOfProcessedImg(type):
     with open(mainImgDir + 'processed/' + type + '/' + getImgFileName(type), 'rb') as file:
         encodedImg = base64.b64encode(file.read())
 
-    return encodedImg
+    base64_string = encodedImg.decode('utf-8')
+    return base64_string
 
 
 def saveImg(img, type):
