@@ -5,6 +5,7 @@
     dest: "{{ app_dir }}"
   notify:
     - restart gunicorn
+  ignore_errors: yes
 
 - name: Install project
   pip:

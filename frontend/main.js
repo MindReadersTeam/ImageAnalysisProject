@@ -1,7 +1,7 @@
 const canvas = document.getElementById('canvas');
 const video = document.getElementById('video');
 
-const URL = 'http://localhost:8533';
+const URL = 'https://mindreaders:8533';
 const uploadEndpoint = 'uploadImg';
 const removeEndpoint = 'removeImg';
 const fetchParams = {

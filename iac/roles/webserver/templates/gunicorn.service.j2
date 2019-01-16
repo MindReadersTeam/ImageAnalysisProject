@@ -12,7 +12,7 @@ WorkingDirectory={{ app_dir }}/backend
 Environment="VIRTUAL_ENV={{ venv_path }}""
 Environment="PATH=$VIRTUAL_ENV/bin:$PATH"
 ExecStart={{ venv_path }}/bin/gunicorn --pid /run/gunicorn/pid   \
-          --log-file /app/logs/gunicorn.log --log-level DEBUG \
+          --log-file /home/{{ app_user }}/logs/gunicorn.log --log-level DEBUG \
           --bind unix:/run/gunicorn/socket wsgi:app
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID

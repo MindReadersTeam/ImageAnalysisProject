@@ -16,6 +16,14 @@ def prepareImgDirs():
         (Path(mainImgDir) / "raw" / gest_type).mkdir(parents=True, exist_ok=True)
         (Path(mainImgDir) / "processed" / gest_type).mkdir(parents=True, exist_ok=True)
 
+    try:
+        with open(mainImgDir + 'imgNumbers.json', 'r') as file:
+            json.load(file)
+
+    except FileNotFoundError:
+        with open(mainImgDir + 'imgNumbers.json', 'w') as file:
+            json.dump({t: 0 for t in gest_types.types}, file)
+
 
 prepareImgDirs()
 
