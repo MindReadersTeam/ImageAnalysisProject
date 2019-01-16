@@ -51,6 +51,8 @@ body {
   background-color: antiquewhite;
   border-radius: 1vh;
   box-sizing:border-box;
+  position: fixed;
+  bottom: 3%;
 }
 
 .controls > *:not(*:last-child) {
