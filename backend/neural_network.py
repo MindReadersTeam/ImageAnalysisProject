@@ -1,21 +1,12 @@
-'''Trains a simple convnet on the MNIST dataset.
-
-Gets to 99.25% test accuracy after 12 epochs
-(there is still a lot of margin for parameter tuning).
-16 seconds per epoch on a GRID K520 GPU.
-'''
-
-from __future__ import print_function
 import keras
-from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
 from keras.preprocessing.image import ImageDataGenerator
 
-train_data = "./data/splitted/train"
-validation_data = "./data/splitted/validation"
+train_data = "./imgs/splitted/train"
+validation_data = "./imgs/splitted/validation"
 
 types = [
     'like',
@@ -30,7 +21,7 @@ types = [
     'call_me'
 ]
 
-batch_size = 32
+batch_size = 16
 num_classes = 10
 epochs = 12
 img_width, img_height = 640, 640
@@ -56,36 +47,32 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adadelta(),
               metrics=['accuracy'])
 
-train_datagen = ImageDataGenerator(
-    rescale=1. / 255
-    )
-    # shear_range=0.2,
-    # zoom_range=0.2,
-  # horizontal_flip=True)
-
+train_datagen = ImageDataGenerator(rescale=1. / 255)
 test_datagen = ImageDataGenerator(rescale=1. / 255)
 
 train_generator = train_datagen.flow_from_directory(
     train_data,
     target_size=(img_width, img_height),
     batch_size=batch_size,
-    class_mode='binary')
+    color_mode='grayscale'
+)
 
 validation_generator = test_datagen.flow_from_directory(
     validation_data,
     target_size=(img_width, img_height),
     batch_size=batch_size,
-    class_mode='binary')
+    color_mode='grayscale'
+)
 
-# model.fit_generator(
-#     train_generator,
-#     # steps_per_epoch=nb_train_samples // batch_size,
-#     epochs=epochs,
-#     validation_data=validation_generator,
-#     verbose=1,
-#     use_multiprocessing=True
-#     )
-    # validation_steps=nb_validation_samples // batch_size)
+model.fit_generator(
+    train_generator,
+    steps_per_epoch=4000 // batch_size,
+    epochs=epochs,
+    validation_data=validation_generator,
+    validation_steps=2000 // batch_size,
+    verbose=2
+    #use_multiprocessing=True
+)
 
 model.save_weights('first_try.h5')
 
