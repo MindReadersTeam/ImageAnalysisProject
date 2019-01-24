@@ -6,6 +6,7 @@ from skimage import io
 from skimage.filters import sobel
 from skimage.filters.rank import mean_bilateral
 from skimage.morphology import disk
+from skimage.transform import resize
 
 _info = False
 
@@ -26,7 +27,7 @@ def load_image(fn, gray=True):
 
 
 def process_image(img, disk_radius=20):
-    return sobel(mean_bilateral(img, disk(disk_radius)))
+    return resize(sobel(mean_bilateral(img, disk(disk_radius))), (128, 128), anti_aliasing=True)
 
 
 def process_and_save_image(img_path, output_path):
@@ -48,17 +49,20 @@ def process_dir(input_dir, output_dir, verbose=False):
     ip = Path(input_dir)
     op = Path(output_dir)
 
-    for path in ip.iterdir():
-        info("Processing: {}".format(path.name), end='')
-        output_path = op / path.name
-        if output_path.exists() and output_path.stat().st_mtime > path.stat().st_mtime:
-            info(" => skip")
-            continue
+    for category in ip.iterdir():
+        (op / category.name).mkdir(parents=True, exist_ok=True)
 
-        img = load_image(path.as_posix())
-        img = process_image(img)
-        io.imsave(output_path.as_posix(), img)
-        info(" => done")
+        for path in category.iterdir():
+            info("Processing: {}".format(path.name), end='')
+            output_path = op / category.name / path.name
+            if output_path.exists() and output_path.stat().st_mtime > path.stat().st_mtime:
+                info(" => skip")
+                continue
+
+            img = load_image(path.as_posix())
+            img = process_image(img)
+            io.imsave(output_path.as_posix(), img)
+            info(" => done")
 
 
 if __name__ == "__main__":
