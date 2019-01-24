@@ -6,6 +6,7 @@ from skimage import io
 from skimage.filters import sobel
 from skimage.filters.rank import mean_bilateral
 from skimage.morphology import disk
+from skimage.transform import resize
 
 _info = False
 
@@ -26,7 +27,7 @@ def load_image(fn, gray=True):
 
 
 def process_image(img, disk_radius=20):
-    return sobel(mean_bilateral(img, disk(disk_radius)))
+    return resize(sobel(mean_bilateral(img, disk(disk_radius))), (128, 128), anti_aliasing=True)
 
 
 def process_and_save_image(img_path, output_path):
@@ -62,4 +63,4 @@ def process_dir(input_dir, output_dir, verbose=False):
 
 
 if __name__ == "__main__":
-    pass
+    process_dir('data/raw/like', 'data/xd/like')
