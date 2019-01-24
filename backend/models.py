@@ -8,6 +8,15 @@ class ModelFactory:
         self.init_shape = init_shape
         self.num_classes = num_classes
 
+    def get_modelo1(self):
+        model = Sequential()
+        model.add(Flatten(input_shape = self.init_shape))
+        model.add(Dense(128, activation='relu'))
+        model.add(Dense(182, activation='relu'))
+        model.add(Dense(144, activation='relu')) 
+        model.add(Dense(self.num_classes, activation='softmax'))
+        return model
+
     def get_model1(self):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(3, 3),
