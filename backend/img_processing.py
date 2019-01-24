@@ -62,4 +62,4 @@ def process_dir(input_dir, output_dir, verbose=False):
 
 
 if __name__ == "__main__":
-    pass
+    process_dir('imgs/raw', 'imgs/processed', verbose=True)
