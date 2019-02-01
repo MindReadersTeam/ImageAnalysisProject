@@ -10,19 +10,6 @@ from matplotlib import pyplot as plt
 train_data = "./imgs/splitted/train"
 validation_data = "./imgs/splitted/validation"
 
-types = [
-    'like',
-    'dislike',
-    'fist',
-    'victory',
-    'ok',
-    'c_letter',
-    'w_letter',
-    'number_5',
-    'hook',
-    'call_me'
-]
-
 batch_size = 32
 num_classes = 10
 epochs = 12
@@ -70,7 +57,7 @@ history = model.fit_generator(
     use_multiprocessing=True
 )
 
-model.save_weights('first_try.h5')
+model.save('models/first_try.h5')
 
 # Loss Curves
 plt.figure(figsize=[8,6])
@@ -93,8 +80,4 @@ plt.ylabel('Accuracy',fontsize=16)
 plt.title('Accuracy Curves',fontsize=16)
 
 plt.savefig('accuracy.png')
-
-# score = model.evaluate(x_test, y_test, verbose=0)
-# print('Test loss:', score[0])
-# print('Test accuracy:', score[1])
 
