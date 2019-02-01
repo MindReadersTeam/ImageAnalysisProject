@@ -88,7 +88,6 @@ const takeScreenShot = callback => {
 
   sendImage(getRequestBody())
     .then(json => {
-      console.log(json);
       putLabels(json);
       restoreHandlingSpaceBar();
     });
@@ -102,7 +101,6 @@ const takeScreenShot = callback => {
   function putLabels(probabilities) {
     const maxProb = Math.max(...probabilities);
 
-    console.log(maxProb);
     probabilities.map((probability, index) => {
       putLabelFor(LABELS[index], probability);
       if (probability === maxProb) {
