@@ -26,17 +26,26 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer='adam',
               metrics=['accuracy'])
 
-train_datagen = ImageDataGenerator(
+data_datagen = ImageDataGenerator(
     rescale=1. / 255,   
     rotation_range=5,
     validation_split=0.2
 )
 
-train_generator = train_datagen.flow_from_directory(
+train_generator = data_datagen.flow_from_directory(
     raw_data,
     target_size=(img_width, img_height),
     batch_size=batch_size,
-    color_mode='rgb'
+    color_mode='rgb',
+    subset='training'
+)
+
+validation_generator = data_datagen.flow_from_directory(
+    raw_data,
+    target_size=(img_width, img_height),
+    batch_size=batch_size,
+    color_mode='rgb',
+    subset='validation'
 )
 
 def show(i = 0):
@@ -50,6 +59,8 @@ model.summary()
 history = model.fit_generator(
     train_generator,
     steps_per_epoch=train_generator.n // batch_size,
+    validation_data=validation_generator,
+    validation_steps=validation_generator.n // batch_size,
     epochs=epochs,
     verbose=2,
     use_multiprocessing=True
