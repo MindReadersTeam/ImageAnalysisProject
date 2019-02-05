@@ -8,6 +8,7 @@ import models
 from matplotlib import pyplot as plt
 
 train_data = "./imgs/splitted/train"
+train_data = "./imgs/raw"
 validation_data = "./imgs/splitted/validation"
 
 batch_size = 32
@@ -21,10 +22,11 @@ else:
     input_shape = (img_width, img_height, 1)
 
 modelFactory = models.ModelFactory(input_shape, num_classes)
-model = modelFactory.get_modelo1()
+model = modelFactory.get_modelo2()
 
 model.compile(loss=keras.losses.categorical_crossentropy,
-              optimizer=keras.optimizers.Adadelta(),
+            #   optimizer=keras.optimizers.Adadelta(),
+              optimizer='adam',
               #optimizer='adam',rmsprop
               metrics=['accuracy'])
 
@@ -51,13 +53,13 @@ history = model.fit_generator(
     train_generator,
     steps_per_epoch=train_generator.n // batch_size,
     epochs=epochs,
-    validation_data=validation_generator,
-    validation_steps=validation_generator.n // batch_size,
+    # validation_data=validation_generator,
+    # validation_steps=validation_generator.n // batch_size,
     verbose=2,
     use_multiprocessing=True
 )
 
-model.save('models/first_try.h5')
+model.save('models/modelo2.h5')
 
 # Loss Curves
 plt.figure(figsize=[8,6])

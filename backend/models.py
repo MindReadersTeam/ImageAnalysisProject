@@ -17,6 +17,17 @@ class ModelFactory:
         model.add(Dense(self.num_classes, activation='softmax'))
         return model
 
+    def get_modelo2(self):
+        model = Sequential()
+        model.add(Flatten(input_shape = self.init_shape))
+        model.add(Dense(128, activation='relu'))
+        model.add(Dropout(0.7))
+        model.add(Dense(256, activation='relu'))
+        model.add(Dropout(0.25))
+        model.add(Dense(256, activation='relu')) 
+        model.add(Dense(self.num_classes, activation='softmax'))
+        return model
+
     def get_model1(self):
         model = Sequential()
         model.add(Conv2D(32, kernel_size=(3, 3),
@@ -46,12 +57,10 @@ class ModelFactory:
         model.add(MaxPooling2D(pool_size=(2, 2)))
         
         model.add(Flatten())
-        model.add(Dense(64))
+        model.add(Dense(256))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.num_classes, activation='softmax'))
-#        model.add(Dense(1))
-#        model.add(Activation('sigmoid')) 
         return model
 
     def get_model3(self):
