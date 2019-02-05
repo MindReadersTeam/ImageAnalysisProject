@@ -82,8 +82,6 @@ class ModelFactory:
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
         model.add(Dense(self.num_classes, activation='softmax'))
-#        model.add(Dense(1))
-#        model.add(Activation('sigmoid'))
         return model
 
     def get_model4(self):
