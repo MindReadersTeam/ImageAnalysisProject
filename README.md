@@ -1,7 +1,13 @@
 # ImageAnalysisProject - web app
 
-Simple web application that recognizes several hand gestures displayed by the user.
+Simple web application that recognizes 10 hand gestures displayed by the user.
+https://mindreaders.ml/
 
+Web application designed to create a photo database needed to train the model of the neural network.
+https://mindreaders.ml/learn
+
+Documentation.
+https://mindreaders.ml/docs
 
 ## Installation
 
