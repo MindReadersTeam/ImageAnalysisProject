@@ -113,7 +113,7 @@ const restoreHandlingSpaceBar = () => {
 
 
 const showModal = (message) => {
-  const modal = document.querySelector('aside');
+  const modal = document.getElementById('msg');
   modal.innerText = message;
   modal.classList.add('fadeIn');
   setTimeout(() => {
