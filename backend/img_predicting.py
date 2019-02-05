@@ -9,7 +9,7 @@ import skimage
 import io
 from skimage.transform import resize
 
-MODEL_PATH = '../models/modelo2.h5'
+MODEL_PATH = '../models/color_model.h5'
 
 predict_api = Blueprint('predict_api', __name__)
 model = load_model(MODEL_PATH)
@@ -27,12 +27,11 @@ def predict():
     if base64encoded_img is None:
         return jsonify({"error": 'file not found'})
     img = base64.b64decode(base64encoded_img)
-    img = load_image(img)
+    img = load_image(img, as_gray=False)
     #img = skimage.img_as_float64(load_image(img))
     #img = process_image(img)
     img = resize(img, (128,128))
     #img = img / 255
-    img = np.expand_dims(img, axis=2)
     img = np.expand_dims(img, axis=0)
 
     probas = model.predict(img, None, 1, 1).tolist()[0]
@@ -40,7 +39,7 @@ def predict():
 
 def load_image(img, as_gray=True):
     fo = io.BytesIO(img)
-    img = skimage.io.call_plugin('imread', fo, plugin='pil', as_gray=True)
+    img = skimage.io.call_plugin('imread', fo, plugin='pil', as_gray=as_gray)
 
     if not hasattr(img, 'ndim'):
         return img

@@ -20,7 +20,7 @@ else:
     input_shape = (img_width, img_height, 3)
 
 modelFactory = models.ModelFactory(input_shape, num_classes)
-model = modelFactory.get_model2()
+model = modelFactory.get_modelo2()
 
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer='adam',
