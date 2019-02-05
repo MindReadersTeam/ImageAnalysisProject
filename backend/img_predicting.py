@@ -7,13 +7,14 @@ from img_processing import process_image
 from skimage.color.colorconv import rgb2gray
 import skimage
 import io
+from skimage.transform import resize
 
-MODEL_PATH = '../models/first_try.h5'
+MODEL_PATH = '../models/modelo2.h5'
 
 predict_api = Blueprint('predict_api', __name__)
 model = load_model(MODEL_PATH)
 model.compile(loss='binary_crossentropy',
-              optimizer='adadelta',
+              optimizer='adam',
               metrics=['accuracy'])
 
 
@@ -27,7 +28,10 @@ def predict():
         return jsonify({"error": 'file not found'})
     img = base64.b64decode(base64encoded_img)
     img = load_image(img)
-    img = process_image(img)
+    #img = skimage.img_as_float64(load_image(img))
+    #img = process_image(img)
+    img = resize(img, (128,128))
+    #img = img / 255
     img = np.expand_dims(img, axis=2)
     img = np.expand_dims(img, axis=0)
 

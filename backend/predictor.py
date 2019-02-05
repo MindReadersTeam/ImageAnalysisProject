@@ -9,11 +9,12 @@ def main(name, input_path):
     model = load_model(name)
 
     model.compile(loss='binary_crossentropy',
-                  optimizer='adadelta',
+                  optimizer='adam',
                   metrics=['accuracy'])
 
     img = load_image(input_path)
     img = process_image(img)
+    img = resize(img, (128, 128), anti_aliasing=True)
     img = np.expand_dims(img, axis=2)
     img = np.expand_dims(img, axis=0)
     

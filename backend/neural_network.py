@@ -7,6 +7,7 @@ from keras.preprocessing.image import ImageDataGenerator
 import models
 from matplotlib import pyplot as plt
 
+raw_data = "./imgs/raw"
 train_data = "./imgs/splitted/train"
 validation_data = "./imgs/splitted/validation"
 

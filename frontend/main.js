@@ -24,12 +24,12 @@ video.onloadedmetadata = (e) => {
     const params = {
       video: {
         width: {
-	  min: 640,
+//	  min: 640,
           ideal: 1920,
 	  max: window.innerWidth
         },
         height: {
-	  min: 640,
+//	  min: 640,
           ideal: 1080,
 	  max: window.innerHeight
         }

@@ -27,7 +27,7 @@ def load_image(fn, gray=True):
 
 
 def process_image(img, disk_radius=20):
-    return resize(sobel(mean_bilateral(img, disk(disk_radius))), (128, 128), anti_aliasing=True)
+    return sobel(mean_bilateral(img, disk(disk_radius)))
 
 
 def process_and_save_image(img_path, output_path):
@@ -36,6 +36,7 @@ def process_and_save_image(img_path, output_path):
 
     img = load_image(ip.as_posix())
     img = process_image(img)
+    img = resize(img, (128, 128), anti_aliasing=True)
     io.imsave(op.as_posix(), img)
 
 
